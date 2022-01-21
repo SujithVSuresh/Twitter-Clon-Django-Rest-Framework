@@ -14,18 +14,21 @@ class ProfileField(models.Model):
     profile_photo = models.ImageField(null=True, blank=True, verbose_name='Profile Photo')
     cover_photo = models.ImageField(null=True, blank=True, verbose_name='Cover Photo')  
     biography = models.CharField(max_length=150, null=True, blank=True, verbose_name='Bio')
+    follower = models.ManyToManyField(User, related_name='follower', blank=True)
+    following = models.ManyToManyField(User, related_name='following', blank=True)
 
 
     def __str__(self):
         return str(self.user_name)
 
-class FollowFollowing(models.Model):
-    following = models.ForeignKey(ProfileField, related_name="following", on_delete=models.CASCADE)
-    followers = models.ForeignKey(ProfileField, related_name="followers", on_delete=models.CASCADE)
+class FollowUnfollow(models.Model):
+    main_user = models.OneToOneField(ProfileField, on_delete=models.CASCADE, related_name='main_user', verbose_name='Main User', blank=True, null=True)
+    follower = models.ManyToManyField(ProfileField, related_name='user_follower', blank=True)
+    following = models.ManyToManyField(ProfileField, related_name='user_following', blank=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.following
+        return str(self.main_user)
 
 
        

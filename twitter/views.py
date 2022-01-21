@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from twitter.serializers import TweetSerializer, CommentSerializer, LikeSerializer, RetweetSerializer
 from .models import Comment, Tweets, Like, Retweet
-from accounts.models import ProfileField, FollowFollowing
+from accounts.models import ProfileField, FollowUnfollow
 
 # Create your views here.
 class TweetView(generics.ListCreateAPIView): 
@@ -12,8 +12,10 @@ class TweetView(generics.ListCreateAPIView):
     serializer_class = TweetSerializer 
 
     def get_queryset(self):
-        self.author = ProfileField.objects.get(user_name=self.request.user)
-        return Tweets.objects.filter(author=self.author) 
+        self.myprof = get_object_or_404(ProfileField, user_name=self.request.user.id) 
+        self.myfollow = FollowUnfollow.objects.get(main_user=self.myprof)
+        self.myfollowing = self.myfollow.following.all()
+        return Tweets.objects.filter(author__in=self.myfollowing)    
 
     def perform_create(self, serializer):
         self.author = ProfileField.objects.get(user_name=self.request.user)

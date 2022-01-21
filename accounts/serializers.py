@@ -1,26 +1,26 @@
 from rest_framework import serializers
-from .models import ProfileField, FollowFollowing
+from .models import ProfileField, FollowUnfollow
 from django.contrib.auth.models import User
 
 class ProfileSerializer(serializers.ModelSerializer):
-    following = serializers.SerializerMethodField()
-    followers = serializers.SerializerMethodField()
+    #following = serializers.SerializerMethodField()
+    #followers = serializers.SerializerMethodField()
     class Meta:
         model = ProfileField
-        fields = ('id', 'profile_photo', 'cover_photo', 'user_name', 'name', 'following', 'followers', 'biography', 'location', 'website', 'dob', 'joined_on')
-        read_only_fields = ('user_name', 'joined_on', 'following', 'followers')
+        fields = ('id', 'profile_photo', 'cover_photo', 'user_name', 'name', 'biography', 'location', 'website', 'dob', 'joined_on')
+        read_only_fields = ('user_name', 'joined_on',)
 
-    def get_following(self, pk):
-        return FollowFollowing.objects.filter(followers=pk).count() 
+    #def get_following(self, pk):
+     #   return FollowFollowing.objects.filter(followers=pk).count() 
 
-    def get_followers(self, pk):
-        return FollowFollowing.objects.filter(following=pk).count()         
+    #def get_followers(self, pk):
+     #   return FollowFollowing.objects.filter(following=pk).count()         
 
-class FollowingSerializer(serializers.ModelSerializer):
+class FollowUnfollowSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FollowFollowing
-        fields = ('id', 'following', 'followers', 'created')
-        read_only_fields = ('created', 'following', 'followers')        
+        model = FollowUnfollow
+        fields = ('id', 'main_user', 'following', 'follower', 'created')
+        read_only_fields = ('main_user', 'following', 'follower', 'created')        
 
 class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
